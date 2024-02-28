@@ -1,5 +1,5 @@
 {
-    "name": "infyomlabs/laravel-generator",
+    "name": "khidirdotid/laravel-generator",
     "type": "library",
     "description": "InfyOm Laravel Generator",
     "keywords": [
@@ -17,10 +17,12 @@
         "swagger"
     ],
     "license": "MIT",
-    "authors": [{
-        "name": "Mitul Golakiya",
-        "email": "me@mitul.me"
-    }],
+    "authors": [
+        {
+            "name": "Khidir Zahid",
+            "email": "khidirdotid@gmail.com"
+        }
+    ],
     "require": {
         "php": "^8.1.0",
         "illuminate/support": "^10.0",
@@ -30,11 +32,10 @@
         "symfony/var-exporter": "^6.2.5"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.0.7",
         "mockery/mockery": "^1.5.1",
         "orchestra/testbench": "^8.0.0",
-        "pestphp/pest": "2.x-dev",
-        "pestphp/pest-plugin-laravel": "2.x-dev"
+        "pestphp/pest": "^2.34",
+        "pestphp/pest-plugin-laravel": "^2.3"
     },
     "autoload": {
         "psr-4": {
@@ -56,10 +57,12 @@
             ]
         }
     },
-    "funding": [{
-        "type": "opencollective",
-        "url": "https://opencollective.com/infyomlabs"
-    }],
+    "funding": [
+        {
+            "type": "saweria",
+            "url": "https://saweria.co/khidirdotid"
+        }
+    ],
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {

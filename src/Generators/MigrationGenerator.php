@@ -19,11 +19,11 @@ class MigrationGenerator extends BaseGenerator
     {
         $templateData = view('laravel-generator::migration', $this->variables())->render();
 
-        $fileName = date('Y_m_d_His').'_'.'create_'.strtolower($this->config->tableName).'_table.php';
+        $fileName = date('Y_m_d_His') . '_' . 'create_' . strtolower($this->config->tableName) . '_table.php';
 
-        g_filesystem()->createFile($this->path.$fileName, $templateData);
+        g_filesystem()->createFile($this->path . $fileName, $templateData);
 
-        $this->config->commandComment(infy_nl().'Migration created: ');
+        $this->config->commandComment(infy_nl() . 'Migration created: ');
         $this->config->commandInfo($fileName);
     }
 
@@ -43,14 +43,15 @@ class MigrationGenerator extends BaseGenerator
 
         if (isset($this->config->fields) && !empty($this->config->fields)) {
             foreach ($this->config->fields as $field) {
-                if ($field->name == 'created_at') {
+                if ($field->name == 'id') {
+                    $fields[] = '$table->id();';
+                    continue;
+                } else if ($field->name == 'created_at') {
                     $createdAtField = $field;
                     continue;
-                } else {
-                    if ($field->name == 'updated_at') {
-                        $updatedAtField = $field;
-                        continue;
-                    }
+                } else if ($field->name == 'updated_at') {
+                    $updatedAtField = $field;
+                    continue;
                 }
 
                 $fields[] = $field->migrationText;
@@ -60,8 +61,10 @@ class MigrationGenerator extends BaseGenerator
             }
         }
 
-        if ($createdAtField->name ?? '' === 'created_at' and $updatedAtField->name ?? '' === 'updated_at') {
-            $fields[] = '$table->timestamps();';
+        if ($createdAtField && $updatedAtField) {
+            if ($createdAtField->name === 'created_at' && $updatedAtField->name === 'updated_at') {
+                $fields[] = '$table->timestamps();';
+            }
         } else {
             if ($createdAtField) {
                 $fields[] = $createdAtField->migrationText;
@@ -76,7 +79,7 @@ class MigrationGenerator extends BaseGenerator
             if ($softDeleteFieldName === 'deleted_at') {
                 $fields[] = '$table->softDeletes();';
             } else {
-                $fields[] = '$table->softDeletes(\''.$softDeleteFieldName.'\');';
+                $fields[] = '$table->softDeletes(\'' . $softDeleteFieldName . '\');';
             }
         }
 
@@ -85,7 +88,7 @@ class MigrationGenerator extends BaseGenerator
 
     public function rollback()
     {
-        $fileName = 'create_'.$this->config->tableName.'_table.php';
+        $fileName = 'create_' . $this->config->tableName . '_table.php';
 
         /** @var SplFileInfo $allFiles */
         $allFiles = File::allFiles($this->path);
@@ -102,7 +105,7 @@ class MigrationGenerator extends BaseGenerator
             foreach ($files as $file) {
                 if (Str::contains($file, $fileName)) {
                     if ($this->rollbackFile($this->path, $file)) {
-                        $this->config->commandComment('Migration file deleted: '.$file);
+                        $this->config->commandComment('Migration file deleted: ' . $file);
                     }
                     break;
                 }

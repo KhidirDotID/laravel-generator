@@ -3,6 +3,7 @@
 namespace InfyOm\Generator\Generators\Scaffold;
 
 use Exception;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use InfyOm\Generator\Generators\BaseGenerator;
 use InfyOm\Generator\Generators\ViewServiceProviderGenerator;
@@ -19,7 +20,7 @@ class ViewGenerator extends BaseGenerator
 
         $this->path = $this->config->paths->views;
         $this->templateType = config('laravel_generator.templates', 'adminlte-templates');
-        $this->templateViewPath = $this->templateType.'::templates';
+        $this->templateViewPath = $this->templateType . '::templates';
     }
 
     public function generate()
@@ -28,14 +29,14 @@ class ViewGenerator extends BaseGenerator
             mkdir($this->path, 0755, true);
         }
 
-//        $htmlInputs = Arr::pluck($this->config->fields, 'htmlInput');
+        //        $htmlInputs = Arr::pluck($this->config->fields, 'htmlInput');
 
         //TODO: Manage files
-//        if (in_array('file', $htmlInputs)) {
-//            $this->config->addDynamicVariable('$FILES$', ", 'files' => true");
-//        }
+        //        if (in_array('file', $htmlInputs)) {
+        //            $this->config->addDynamicVariable('$FILES$', ", 'files' => true");
+        //        }
 
-        $this->config->commandComment(infy_nl().'Generating Views...');
+        $this->config->commandComment(infy_nl() . 'Generating Views...');
 
         if ($this->config->getOption('views')) {
             $viewsToBeGenerated = explode(',', $this->config->getOption('views'));
@@ -94,21 +95,21 @@ class ViewGenerator extends BaseGenerator
                 throw new Exception('Invalid Table Type');
         }
 
-        g_filesystem()->createFile($this->path.'table.blade.php', $templateData);
+        g_filesystem()->createFile($this->path . 'table.blade.php', $templateData);
 
         $this->config->commandInfo('table.blade.php created');
     }
 
     protected function generateDataTableBody(): string
     {
-        return view($this->templateViewPath.'.scaffold.table.datatable.body')->render();
+        return view($this->templateViewPath . '.scaffold.table.datatable.body')->render();
     }
 
     protected function generateDataTableActions()
     {
-        $templateData = view($this->templateViewPath.'.scaffold.table.datatable.actions')->render();
+        $templateData = view($this->templateViewPath . '.scaffold.table.datatable.actions')->render();
 
-        g_filesystem()->createFile($this->path.'datatables_actions.blade.php', $templateData);
+        g_filesystem()->createFile($this->path . 'datatables_actions.blade.php', $templateData);
 
         $this->config->commandInfo('datatables_actions.blade.php created');
     }
@@ -122,7 +123,7 @@ class ViewGenerator extends BaseGenerator
                 continue;
             }
 
-            $tableBodyFields[] = view($this->templateViewPath.'.scaffold.table.blade.cell', [
+            $tableBodyFields[] = view($this->templateViewPath . '.scaffold.table.blade.cell', [
                 'modelVariable' => $this->config->modelNames->camel,
                 'fieldName'     => $field->name,
             ])->render();
@@ -130,9 +131,9 @@ class ViewGenerator extends BaseGenerator
 
         $tableBodyFields = implode(infy_nl_tab(1, 5), $tableBodyFields);
 
-        $paginate = view($this->templateViewPath.'.scaffold.paginate')->render();
+        $paginate = view($this->templateViewPath . '.scaffold.paginate')->render();
 
-        return view($this->templateViewPath.'.scaffold.table.blade.body', [
+        return view($this->templateViewPath . '.scaffold.table.blade.body', [
             'fieldHeaders' => $this->generateTableHeaderFields(),
             'fieldBody'    => $tableBodyFields,
             'paginate'     => $paginate,
@@ -149,7 +150,7 @@ class ViewGenerator extends BaseGenerator
             }
 
             $headerFields[] = view(
-                $this->templateType.'::templates.scaffold.table.blade.header',
+                $this->templateType . '::templates.scaffold.table.blade.header',
                 $field->variables()
             )->render();
         }
@@ -162,21 +163,21 @@ class ViewGenerator extends BaseGenerator
         switch ($this->config->tableType) {
             case 'datatables':
             case 'blade':
-                $tableReplaceString = "@include('".$this->config->prefixes->getViewPrefixForInclude().$this->config->modelNames->snakePlural.".table')";
+                $tableReplaceString = "@include('" . $this->config->prefixes->getViewPrefixForInclude() . $this->config->modelNames->snakePlural . ".table')";
                 break;
 
             case 'livewire':
-                $tableReplaceString = view($this->templateViewPath.'.scaffold.table.livewire.body')->render();
+                $tableReplaceString = view($this->templateViewPath . '.scaffold.table.livewire.body')->render();
                 break;
 
             default:
                 throw new Exception('Invalid table type');
         }
 
-        $templateData = view($this->templateViewPath.'.scaffold.index', ['table' => $tableReplaceString])
+        $templateData = view($this->templateViewPath . '.scaffold.index', ['table' => $tableReplaceString])
             ->render();
 
-        g_filesystem()->createFile($this->path.'index.blade.php', $templateData);
+        g_filesystem()->createFile($this->path . 'index.blade.php', $templateData);
 
         $this->config->commandInfo('index.blade.php created');
     }
@@ -196,34 +197,34 @@ class ViewGenerator extends BaseGenerator
             );
 
             // TODO
-//            if ($field->htmlType == 'selectTable') {
-//                $inputArr = explode(',', $field->htmlValues[1]);
-//                $columns = '';
-//                foreach ($inputArr as $item) {
-//                    $columns .= "'$item'" . ',';  //e.g 'email,id,'
-//                }
-//                $columns = substr_replace($columns, '', -1); // remove last ,
-//
-//                $htmlValues = explode(',', $field->htmlValues[0]);
-//                $selectTable = $htmlValues[0];
-//                $modalName = null;
-//                if (count($htmlValues) == 2) {
-//                    $modalName = $htmlValues[1];
-//                }
-//
-//                $tableName = $this->config->tableName;
-//                $viewPath = $this->config->prefixes->view;
-//                if (!empty($viewPath)) {
-//                    $tableName = $viewPath . '.' . $tableName;
-//                }
-//
-//                $variableName = Str::singular($selectTable) . 'Items'; // e.g $userItems
-//
-//                $fieldTemplate = $this->generateViewComposer($tableName, $variableName, $columns, $selectTable, $modalName);
-//            }
+            //            if ($field->htmlType == 'selectTable') {
+            //                $inputArr = explode(',', $field->htmlValues[1]);
+            //                $columns = '';
+            //                foreach ($inputArr as $item) {
+            //                    $columns .= "'$item'" . ',';  //e.g 'email,id,'
+            //                }
+            //                $columns = substr_replace($columns, '', -1); // remove last ,
+            //
+            //                $htmlValues = explode(',', $field->htmlValues[0]);
+            //                $selectTable = $htmlValues[0];
+            //                $modalName = null;
+            //                if (count($htmlValues) == 2) {
+            //                    $modalName = $htmlValues[1];
+            //                }
+            //
+            //                $tableName = $this->config->tableName;
+            //                $viewPath = $this->config->prefixes->view;
+            //                if (!empty($viewPath)) {
+            //                    $tableName = $viewPath . '.' . $tableName;
+            //                }
+            //
+            //                $variableName = Str::singular($selectTable) . 'Items'; // e.g $userItems
+            //
+            //                $fieldTemplate = $this->generateViewComposer($tableName, $variableName, $columns, $selectTable, $modalName);
+            //            }
         }
 
-        g_filesystem()->createFile($this->path.'fields.blade.php', implode(infy_nls(2), $htmlFields));
+        g_filesystem()->createFile($this->path . 'fields.blade.php', implode(infy_nls(2), $htmlFields));
         $this->config->commandInfo('field.blade.php created');
     }
 
@@ -237,28 +238,34 @@ class ViewGenerator extends BaseGenerator
 
         $viewServiceProvider = new ViewServiceProviderGenerator();
         $viewServiceProvider->generate();
-        $viewServiceProvider->addViewVariables($tableName.'.fields', $variableName, $columns, $selectTable, $modelName);
+        $viewServiceProvider->addViewVariables($tableName . '.fields', $variableName, $columns, $selectTable, $modelName);
 
         return str_replace(
             '$INPUT_ARR$',
-            '$'.$variableName,
+            '$' . $variableName,
             $fieldTemplate
         );
     }
 
     protected function generateCreate()
     {
-        $templateData = view($this->templateViewPath.'.scaffold.create')->render();
+        $htmlTypes = Arr::pluck($this->config->fields, 'htmlType');
 
-        g_filesystem()->createFile($this->path.'create.blade.php', $templateData);
+        $data['files'] = in_array('file', $htmlTypes) ? 'true' : 'false';
+        $templateData = view($this->templateViewPath . '.scaffold.create', $data)->render();
+
+        g_filesystem()->createFile($this->path . 'create.blade.php', $templateData);
         $this->config->commandInfo('create.blade.php created');
     }
 
     protected function generateUpdate()
     {
-        $templateData = view($this->templateViewPath.'.scaffold.edit')->render();
+        $htmlTypes = Arr::pluck($this->config->fields, 'htmlType');
 
-        g_filesystem()->createFile($this->path.'edit.blade.php', $templateData);
+        $data['files'] = in_array('file', $htmlTypes) ? 'true' : 'false';
+        $templateData = view($this->templateViewPath . '.scaffold.edit', $data)->render();
+
+        g_filesystem()->createFile($this->path . 'edit.blade.php', $templateData);
         $this->config->commandInfo('edit.blade.php created');
     }
 
@@ -271,19 +278,19 @@ class ViewGenerator extends BaseGenerator
                 continue;
             }
 
-            $fieldsStr .= view($this->templateViewPath.'.scaffold.show_field', $field->variables());
+            $fieldsStr .= view($this->templateViewPath . '.scaffold.show_field', $field->variables());
             $fieldsStr .= infy_nls(2);
         }
 
-        g_filesystem()->createFile($this->path.'show_fields.blade.php', $fieldsStr);
+        g_filesystem()->createFile($this->path . 'show_fields.blade.php', $fieldsStr);
         $this->config->commandInfo('show_fields.blade.php created');
     }
 
     protected function generateShow()
     {
-        $templateData = view($this->templateViewPath.'.scaffold.show')->render();
+        $templateData = view($this->templateViewPath . '.scaffold.show')->render();
 
-        g_filesystem()->createFile($this->path.'show.blade.php', $templateData);
+        g_filesystem()->createFile($this->path . 'show.blade.php', $templateData);
         $this->config->commandInfo('show.blade.php created');
     }
 
@@ -302,7 +309,7 @@ class ViewGenerator extends BaseGenerator
         if (!empty($views)) {
             $files = [];
             foreach ($views as $view) {
-                $files[] = $view.'.blade.php';
+                $files[] = $view . '.blade.php';
             }
         }
 
@@ -312,7 +319,10 @@ class ViewGenerator extends BaseGenerator
 
         foreach ($files as $file) {
             if ($this->rollbackFile($this->path, $file)) {
-                $this->config->commandComment($file.' file deleted');
+                if (count(scandir($this->path)) == 2) {
+                    rmdir($this->path);
+                }
+                $this->config->commandComment($file . ' file deleted');
             }
         }
     }

@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'add_new'      => 'Tambah baru',
     'cancel'       => 'Membatalkan',
     'create'       => 'Membuat',
@@ -15,9 +14,9 @@ return [
     'reset'        => 'Mengatur ulang',
     'reload'       => 'Muat ulang',
     'action'       => 'Tindakan',
-    'id'           => 'Indo',
-    'created_at'   => 'Dibuat di',
+    'id'           => 'Id',
+    'created_at'   => 'Dibuat Pada',
     'updated_at'   => 'Diperbarui Pada',
-    'deleted_at'   => 'Dihapus At',
+    'deleted_at'   => 'Dihapus Pada',
     'are_you_sure' => 'Apa kamu yakin?',
 ];

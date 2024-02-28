@@ -13,14 +13,14 @@ return [
     |
     */
 
-    'failed'   => 'Kredensial ini tidak cocok dengan catatan kami.',
-    'throttle' => 'Terlalu banyak upaya login. Silakan coba lagi dalam :detik detik.',
+    'failed'   => 'Identitas tersebut tidak cocok dengan data kami.',
+    'throttle' => 'Terlalu banyak upaya masuk. Silahkan coba lagi dalam :seconds detik.',
 
     'full_name'        => 'Nama lengkap',
     'email'            => 'Surel',
     'password'         => 'Kata sandi',
-    'confirm_password' => 'setujui password',
-    'remember_me'      => 'Ingat saya',
+    'confirm_password' => 'Konfirmasi Kata sandi',
+    'remember_me'      => 'Ingat Saya',
     'sign_in'          => 'Masuk',
     'sign_out'         => 'Keluar',
     'register'         => 'Daftar',
@@ -33,7 +33,7 @@ return [
 
     'registration' => [
         'title'           => 'Daftarkan keanggotaan baru',
-        'i_agree'         => 'saya setuju untuk',
+        'i_agree'         => 'Saya setuju untuk',
         'terms'           => 'syarat-syaratnya',
         'have_membership' => 'Saya sudah memiliki keanggotaan',
     ],

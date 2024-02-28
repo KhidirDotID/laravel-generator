@@ -8,6 +8,7 @@ use InfyOm\Generator\Generators\API\APIRequestGenerator;
 use InfyOm\Generator\Generators\API\APIRoutesGenerator;
 use InfyOm\Generator\Generators\API\APITestGenerator;
 use InfyOm\Generator\Generators\FactoryGenerator;
+use InfyOm\Generator\Generators\LocaleGenerator;
 use InfyOm\Generator\Generators\MigrationGenerator;
 use InfyOm\Generator\Generators\ModelGenerator;
 use InfyOm\Generator\Generators\RepositoryGenerator;
@@ -17,6 +18,7 @@ use InfyOm\Generator\Generators\Scaffold\MenuGenerator;
 use InfyOm\Generator\Generators\Scaffold\RequestGenerator;
 use InfyOm\Generator\Generators\Scaffold\RoutesGenerator;
 use InfyOm\Generator\Generators\Scaffold\ViewGenerator;
+use InfyOm\Generator\Generators\SchemaGenerator;
 use InfyOm\Generator\Generators\SeederGenerator;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -91,7 +93,7 @@ class RollbackGeneratorCommand extends BaseCommand
             $routeGenerator->rollback();
 
             $menuGenerator = app(MenuGenerator::class);
-            $menuGenerator->rollback();
+            // $menuGenerator->rollback();
         }
 
         if ($this->config->options->tests) {
@@ -110,6 +112,16 @@ class RollbackGeneratorCommand extends BaseCommand
         if ($this->config->options->seeder) {
             $seederGenerator = app(SeederGenerator::class);
             $seederGenerator->rollback();
+        }
+
+        if ($this->config->options->saveSchemaFile) {
+            $schemaGenerator = app(SchemaGenerator::class);
+            $schemaGenerator->rollback();
+        }
+
+        if ($this->config->options->localized) {
+            $localeGenerator = app(LocaleGenerator::class);
+            $localeGenerator->rollback();
         }
 
         $this->info('Generating autoload files');

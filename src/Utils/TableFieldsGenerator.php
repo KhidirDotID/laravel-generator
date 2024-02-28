@@ -77,15 +77,13 @@ class TableFieldsGenerator
             'bit'  => 'boolean',
         ];
 
-//        $this->tableDetails = $this->schemaManager->listTableDetails($this->tableName);
+        $this->tableDetails = $this->schemaManager->listTableDetails($this->tableName);
 
         $mappings = config('laravel_generator.from_table.doctrine_mappings', []);
         $mappings = array_merge($mappings, $defaultMappings);
         foreach ($mappings as $dbType => $doctrineType) {
             $platform->registerDoctrineTypeMapping($dbType, $doctrineType);
         }
-        // Added
-        $this->tableDetails = $this->schemaManager->listTableDetails($this->tableName);
 
         $columns = $this->schemaManager->listTableColumns($tableName);
 
@@ -252,8 +250,8 @@ class TableFieldsGenerator
      * Generates field.
      *
      * @param Column $column
-     * @param        $dbType
-     * @param        $htmlType
+     * @param $dbType
+     * @param $htmlType
      *
      * @return GeneratorField
      */

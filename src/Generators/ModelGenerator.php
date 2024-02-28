@@ -23,25 +23,25 @@ class ModelGenerator extends BaseGenerator
         parent::__construct();
 
         $this->path = $this->config->paths->model;
-        $this->fileName = $this->config->modelNames->name.'.php';
+        $this->fileName = $this->config->modelNames->name . '.php';
     }
 
     public function generate()
     {
         $templateData = view('laravel-generator::model.model', $this->variables())->render();
 
-        g_filesystem()->createFile($this->path.$this->fileName, $templateData);
+        g_filesystem()->createFile($this->path . $this->fileName, $templateData);
 
-        $this->config->commandComment(infy_nl().'Model created: ');
+        $this->config->commandComment(infy_nl() . 'Model created: ');
         $this->config->commandInfo($this->fileName);
     }
 
     public function variables(): array
     {
         return [
-            'fillables'        => implode(','.infy_nl_tab(1, 2), $this->generateFillables()),
-            'casts'            => implode(','.infy_nl_tab(1, 2), $this->generateCasts()),
-            'rules'            => implode(','.infy_nl_tab(1, 2), $this->generateRules()),
+            'fillables'        => implode(',' . infy_nl_tab(1, 2), $this->generateFillables()),
+            'casts'            => implode(',' . infy_nl_tab(1, 2), $this->generateCasts()),
+            'rules'            => implode(',' . infy_nl_tab(1, 2), $this->generateRules()),
             'swaggerDocs'      => $this->fillDocs(),
             'customPrimaryKey' => $this->customPrimaryKey(),
             'customCreatedAt'  => $this->customCreatedAt(),
@@ -106,7 +106,7 @@ class ModelGenerator extends BaseGenerator
         if (isset($this->config->fields) && !empty($this->config->fields)) {
             foreach ($this->config->fields as $field) {
                 if ($field->isFillable) {
-                    $fillables[] = "'".$field->name."'";
+                    $fillables[] = "'" . $field->name . "'";
                 }
             }
         }
@@ -137,11 +137,11 @@ class ModelGenerator extends BaseGenerator
             )->render();
         }
 
-        $requiredFields = '{'.implode(',', $requiredFields).'}';
+        $requiredFields = '{' . implode(',', $requiredFields) . '}';
 
         return view('swagger-generator::model.model', [
             'requiredFields' => $requiredFields,
-            'properties'     => implode(','.infy_nl().' ', $properties),
+            'properties'     => implode(',' . infy_nl() . ' ', $properties),
         ]);
     }
 
@@ -153,7 +153,7 @@ class ModelGenerator extends BaseGenerator
             foreach ($this->config->fields as $field) {
                 if (!empty($field->validations)) {
                     if (Str::contains($field->validations, 'required')) {
-                        $requiredFields[] = '"'.$field->name.'"';
+                        $requiredFields[] = '"' . $field->name . '"';
                     }
                 }
             }
@@ -162,10 +162,10 @@ class ModelGenerator extends BaseGenerator
         return $requiredFields;
     }
 
-    protected function generateRules(): array
+    public function generateRules(): array
     {
         $dont_require_fields = config('laravel_generator.options.hidden_fields', [])
-                + config('laravel_generator.options.excluded_fields', $this->excluded_fields);
+            + config('laravel_generator.options.excluded_fields', $this->excluded_fields);
 
         $rules = [];
 
@@ -204,7 +204,7 @@ class ModelGenerator extends BaseGenerator
 
                             // Enforce a maximum string length if possible.
                             if ((int) $field->fieldDetails->getLength() > 0) {
-                                $rule[] = 'max:'.$field->fieldDetails->getLength();
+                                $rule[] = 'max:' . $field->fieldDetails->getLength();
                             }
                             break;
                     }
@@ -222,7 +222,7 @@ class ModelGenerator extends BaseGenerator
                     });
                     $field->validations = implode('|', $rule);
                 }
-                $rule = "'".$field->name."' => '".$field->validations."'";
+                $rule = "'" . $field->name . "' => '" . $field->validations . "'";
                 $rules[] = $rule;
             }
         }
@@ -237,9 +237,9 @@ class ModelGenerator extends BaseGenerator
         foreach ($this->generateRules() as $rule) {
             if (Str::contains($rule, 'unique:')) {
                 $rule = explode('=>', $rule);
-                $string = '$rules['.trim($rule[0]).'].","';
+                $string = '$rules[' . trim($rule[0]) . '] . ","';
 
-                $uniqueRules .= '$rules['.trim($rule[0]).'] = '.$string.'.$this->route("'.$tableNameSingular.'");';
+                $uniqueRules .= '$rules[' . trim($rule[0]) . '] = ' . $string . ' . $this->route("' . $tableNameSingular . '");';
             }
         }
 
@@ -257,7 +257,7 @@ class ModelGenerator extends BaseGenerator
                 continue;
             }
 
-            $rule = "'".$field->name."' => ";
+            $rule = "'" . $field->name . "' => ";
 
             switch (strtolower($field->dbType)) {
                 case 'integer':
@@ -317,7 +317,7 @@ class ModelGenerator extends BaseGenerator
 
                 $relationShipText = $field;
                 if (in_array($field, $fieldsArr)) {
-                    $relationShipText = $relationShipText.'_'.$count;
+                    $relationShipText = $relationShipText . '_' . $count;
                     $count++;
                 }
 
@@ -335,7 +335,7 @@ class ModelGenerator extends BaseGenerator
     public function rollback()
     {
         if ($this->rollbackFile($this->path, $this->fileName)) {
-            $this->config->commandComment('Model file deleted: '.$this->fileName);
+            $this->config->commandComment('Model file deleted: ' . $this->fileName);
         }
     }
 }

@@ -18,6 +18,7 @@ use InfyOm\Generator\Generators\API\APIResourceGenerator;
 use InfyOm\Generator\Generators\API\APIRoutesGenerator;
 use InfyOm\Generator\Generators\API\APITestGenerator;
 use InfyOm\Generator\Generators\FactoryGenerator;
+use InfyOm\Generator\Generators\LocaleGenerator;
 use InfyOm\Generator\Generators\MigrationGenerator;
 use InfyOm\Generator\Generators\ModelGenerator;
 use InfyOm\Generator\Generators\RepositoryGenerator;
@@ -27,6 +28,7 @@ use InfyOm\Generator\Generators\Scaffold\MenuGenerator;
 use InfyOm\Generator\Generators\Scaffold\RequestGenerator;
 use InfyOm\Generator\Generators\Scaffold\RoutesGenerator;
 use InfyOm\Generator\Generators\Scaffold\ViewGenerator;
+use InfyOm\Generator\Generators\SchemaGenerator;
 use InfyOm\Generator\Generators\SeederGenerator;
 use InfyOm\Generator\Utils\GeneratorFieldsInputUtil;
 use InfyOm\Generator\Utils\TableFieldsGenerator;
@@ -81,6 +83,16 @@ class BaseCommand extends Command
         if ($this->config->options->seeder) {
             $seederGenerator = app(SeederGenerator::class);
             $seederGenerator->generate();
+        }
+
+        if ($this->config->options->saveSchemaFile) {
+            $schemaGenerator = app(SchemaGenerator::class);
+            $schemaGenerator->generate();
+        }
+
+        if ($this->config->options->localized) {
+            $localeGenerator = app(LocaleGenerator::class);
+            $localeGenerator->generate();
         }
     }
 
@@ -141,16 +153,12 @@ class BaseCommand extends Command
 
         if (!$this->isSkip('menu')) {
             $menuGenerator = app(MenuGenerator::class);
-            $menuGenerator->generate();
+            // $menuGenerator->generate();
         }
     }
 
     public function performPostActions($runMigration = false)
     {
-        if ($this->config->options->saveSchemaFile) {
-            $this->saveSchemaFile();
-        }
-
         if ($runMigration) {
             if ($this->option('forceMigrate')) {
                 $this->runMigration();
@@ -158,14 +166,10 @@ class BaseCommand extends Command
                 $requestFromConsole = (php_sapi_name() == 'cli');
                 if ($this->option('jsonFromGUI') && $requestFromConsole) {
                     $this->runMigration();
-                } elseif ($requestFromConsole && $this->confirm(infy_nl().'Do you want to migrate database? [y|N]', false)) {
+                } elseif ($requestFromConsole && $this->confirm(infy_nl() . 'Do you want to migrate database? [y|N]', false)) {
                     $this->runMigration();
                 }
             }
-        }
-
-        if ($this->config->options->localized) {
-            $this->saveLocaleFile();
         }
 
         if (!$this->isSkip('dump-autoload')) {
@@ -219,18 +223,18 @@ class BaseCommand extends Command
         foreach ($this->config->relations as $relation) {
             $fileFields[] = [
                 'type'     => 'relation',
-                'relation' => $relation->type.','.implode(',', $relation->inputs),
+                'relation' => $relation->type . ',' . implode(',', $relation->inputs),
             ];
         }
 
         $path = config('laravel_generator.path.schema_files', resource_path('model_schemas/'));
 
-        $fileName = $this->config->modelNames->name.'.json';
+        $fileName = $this->config->modelNames->name . '.json';
 
-        if (file_exists($path.$fileName) && !$this->confirmOverwrite($fileName)) {
+        if (file_exists($path . $fileName) && !$this->confirmOverwrite($fileName)) {
             return;
         }
-        g_filesystem()->createFile($path.$fileName, json_encode($fileFields, JSON_PRETTY_PRINT));
+        g_filesystem()->createFile($path . $fileName, json_encode($fileFields, JSON_PRETTY_PRINT));
         $this->comment("\nSchema File saved: ");
         $this->info($fileName);
     }
@@ -238,8 +242,8 @@ class BaseCommand extends Command
     protected function saveLocaleFile()
     {
         $locales = [
-            'singular' => $this->config->modelNames->name,
-            'plural'   => $this->config->modelNames->plural,
+            'singular' => $this->config->modelNames->human,
+            'plural'   => $this->config->modelNames->humanPlural,
             'fields'   => [],
         ];
 
@@ -249,16 +253,16 @@ class BaseCommand extends Command
 
         $path = lang_path('en/models/');
 
-        $fileName = $this->config->modelNames->snakePlural.'.php';
+        $fileName = $this->config->modelNames->snakePlural . '.php';
 
-        if (file_exists($path.$fileName) && !$this->confirmOverwrite($fileName)) {
+        if (file_exists($path . $fileName) && !$this->confirmOverwrite($fileName)) {
             return;
         }
 
         $locales = VarExporter::export($locales);
-        $end = ';'.infy_nl();
-        $content = "<?php\n\nreturn ".$locales.$end;
-        g_filesystem()->createFile($path.$fileName, $content);
+        $end = ';' . infy_nl();
+        $content = "<?php\n\nreturn " . $locales . $end;
+        g_filesystem()->createFile($path . $fileName, $content);
         $this->comment("\nModel Locale File saved.");
         $this->info($fileName);
     }
@@ -266,7 +270,7 @@ class BaseCommand extends Command
     protected function confirmOverwrite(string $fileName, string $prompt = ''): bool
     {
         $prompt = (empty($prompt))
-            ? $fileName.' already exists. Do you want to overwrite it? [y|N]'
+            ? $fileName . ' already exists. Do you want to overwrite it? [y|N]'
             : $prompt;
 
         return $this->confirm($prompt, false);
@@ -418,7 +422,7 @@ class BaseCommand extends Command
                 'laravel_generator.path.schema_files',
                 resource_path('model_schemas/')
             );
-            $filePath = $schemaFileDirector.$fieldsFileValue;
+            $filePath = $schemaFileDirector . $fieldsFileValue;
         }
 
         if (!file_exists($filePath)) {
@@ -457,7 +461,7 @@ class BaseCommand extends Command
 
         // Manage migrate option
         if (isset($jsonData['migrate']) && $jsonData['migrate'] == false) {
-            $this->config->options['skip'][] = 'migration';
+            $this->config->options->skip[] = 'migration';
         }
 
         foreach ($jsonData['fields'] as $field) {
