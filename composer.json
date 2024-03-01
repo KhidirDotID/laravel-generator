@@ -53,7 +53,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "\\InfyOm\\Generator\\InfyOmGeneratorServiceProvider"
+                "\\InfyOm\\Generator\\Provider\\InfyOmGeneratorServiceProvider"
             ]
         }
     },
