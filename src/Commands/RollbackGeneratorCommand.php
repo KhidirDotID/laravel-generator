@@ -93,7 +93,7 @@ class RollbackGeneratorCommand extends BaseCommand
             $routeGenerator->rollback();
 
             $menuGenerator = app(MenuGenerator::class);
-            // $menuGenerator->rollback();
+            $menuGenerator->rollback();
         }
 
         if ($this->config->options->tests) {

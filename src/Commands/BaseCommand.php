@@ -153,7 +153,7 @@ class BaseCommand extends Command
 
         if (!$this->isSkip('menu')) {
             $menuGenerator = app(MenuGenerator::class);
-            // $menuGenerator->generate();
+            $menuGenerator->generate();
         }
     }
 
