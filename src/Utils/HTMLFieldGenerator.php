@@ -13,8 +13,10 @@ class HTMLFieldGenerator
         $variables = [];
 
         if (!empty($validations = self::generateValidations($field))) {
-            $variables['options'] = ', '.implode(', ', $validations);
+            $variables['options'] = ', ' . implode(', ', $validations);
         }
+
+        $variables['required'] = in_array('required', explode('|', $field->validations));
 
         switch ($field->htmlType) {
             case 'select':
@@ -39,14 +41,14 @@ class HTMLFieldGenerator
 
                 $radioButtons = [];
                 foreach ($keyValues as $label => $value) {
-                    $radioButtons[] = view($templateType.'.fields.radio', [
+                    $radioButtons[] = view($templateType . '.fields.radio', [
                         'label'     => $label,
                         'value'     => $value,
                         'fieldName' => $field->name,
                     ]);
                 }
 
-                return view($templateType.'.fields.radio_group', array_merge(
+                return view($templateType . '.fields.radio_group', array_merge(
                     ['radioButtons' => implode(infy_nl_tab(), $radioButtons)],
                     array_merge(
                         $field->variables(),
@@ -56,7 +58,7 @@ class HTMLFieldGenerator
         }
 
         return view(
-            $templateType.'.fields.'.$viewName,
+            $templateType . '.fields.' . $viewName,
             array_merge(
                 $field->variables(),
                 $variables
